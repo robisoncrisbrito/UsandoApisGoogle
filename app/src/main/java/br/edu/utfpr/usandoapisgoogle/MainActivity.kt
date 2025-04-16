@@ -1,7 +1,9 @@
 package br.edu.utfpr.usandoapisgoogle
 
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -26,7 +28,7 @@ class MainActivity : AppCompatActivity() {
 
     fun btVerEnderecoOnClick(view: View) {
         Thread ( Runnable {
-            val endereco = "https://maps.googleapis.com/maps/api/geocode/xml?latlng=-26.0751195,-53.0613228&key=AIzaSyDsy454kAkXofX828BEMieAQ7EbtpjohZY"
+            val endereco = "https://maps.googleapis.com/maps/api/geocode/xml?latlng=${tvLatitude.text},${tvLongitude.text}&key=AIzaSyDsy454kAkXofX828BEMieAQ7EbtpjohZY"
             val url = URL(endereco)
             var con = url.openConnection()
 
@@ -64,5 +66,29 @@ class MainActivity : AppCompatActivity() {
 
 
     }
-    fun btVerMapaOnClick(view: View) {}
+    fun btVerMapaOnClick(view: View) {
+        Thread {
+            val endereco = "https://maps.googleapis.com/maps/api/staticmap?center=Pato+Branco&zoom=11&size=400x400&key=AIzaSyDsy454kAkXofX828BEMieAQ7EbtpjohZY"
+
+            val url = URL( endereco )
+            val urlConnection = url.openConnection()
+            val inputStream = urlConnection.getInputStream()
+
+            val imagem = BitmapFactory.decodeStream( inputStream )
+
+            runOnUiThread {
+                val dialog = AlertDialog.Builder(this)
+                dialog.setTitle("Mapa: ")
+
+                val imageView = ImageView( this )
+                imageView.setImageBitmap( imagem )
+                dialog.setView( imageView)
+
+                dialog.setCancelable(false)
+                dialog.setNeutralButton("OK", null)
+                dialog.show()
+            }
+
+        }.start()
+    }
 }
